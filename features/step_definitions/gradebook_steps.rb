@@ -57,3 +57,22 @@ end
 When("I click {string} on a post") do |string|
     click_on string, :match => :first
 end
+
+Given("I am on the homepage") do
+    visit '/'
+end
+
+When("I go to the log in page") do
+    visit 'users/sign_in'
+end
+
+When("I fill out the form with a grade over {int} and submit") do |int|
+    fill_in "grade_student_id", with: "123456"
+    fill_in "grade_student_name", with: "Bob Dylan"
+    fill_in "grade_student_grade", with: 101
+    click_on "Create Grade"
+end
+  
+Then("I should have not added a grade") do
+    expect(page).to have_content("Student grade can't be greater than 100")
+end
