@@ -57,3 +57,15 @@ end
 When("I click {string} on a post") do |string|
     click_on string, :match => :first
 end
+
+Then("I should see a column labeled Student id") do
+    expect(page).to have_content("Student ID")
+  end
+  
+  Then("I should see a label called Student id") do
+    expect(page).to have_content("Student ID")
+  end
+  
+  Then("I should see a box labeled Student id") do
+    expect(page).to have_content("Student id")
+  end
