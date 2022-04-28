@@ -57,3 +57,19 @@ end
 When("I click {string} on a post") do |string|
     click_on string, :match => :first
 end
+
+Given("I am on the homepage") do
+    visit '/'
+end
+
+When("I go to the log in page") do
+    visit '/users/sign_in'
+end
+
+Then("I should not be able to see the {string} link") do |string|
+    expect(page).not_to have_content(string)
+end
+
+Then("I should be able to see the {string} link") do |string|
+    expect(page).to have_content(string)
+end
