@@ -63,6 +63,7 @@ Given("I am on the homepage") do
 end
 
 When("I go to the log in page") do
+<<<<<<< HEAD
     visit '/users/sign_in'
 end
 
@@ -72,4 +73,26 @@ end
 
 Then("I should be able to see the {string} link") do |string|
     expect(page).to have_content(string)
+=======
+<<<<<<< HEAD
+    visit '/users/sign_in'
+end
+
+Then("I should not be able to see the {string}button") do |string|
+    expect(page).not_to have_content(string)
+=======
+    visit 'users/sign_in'
+end
+
+When("I fill out the form with a grade over {int} and submit") do |int|
+    fill_in "grade_student_id", with: "123456"
+    fill_in "grade_student_name", with: "Bob Dylan"
+    fill_in "grade_student_grade", with: 101
+    click_on "Create Grade"
+end
+  
+Then("I should have not added a grade") do
+    expect(page).to have_content("Student grade can't be greater than 100")
+>>>>>>> d87866a4f664dea99cd0eb3276d9f787c9cdf13b
+>>>>>>> master
 end
