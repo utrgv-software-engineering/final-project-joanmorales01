@@ -1,10 +1,11 @@
 class GradesController < ApplicationController
   before_action :set_grade, only: [:show, :edit, :update, :destroy]
+  before_action :authenticate_user!
 
   # GET /grades
   def index
-    if !user_signed_in?
-      redirect_to user_session_path
+    if !user_signed_in? 
+      redirect_to new_user_session_path
     end
   end
 
