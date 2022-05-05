@@ -15,12 +15,12 @@
 RSpec.describe "/grades", type: :request do
 
   #Happy Paths
-  context "When signed in" do
+  context "When signed in as teacher" do
     before do 
-      @user = create(:user)
+      @user = User.create(email: "teacher@teacher.com", password: "password123", account_id: 1)
       sign_in @user
     end
-
+  
     describe "GET /index" do
       it "renders a successful response" do
         create(:grade, :valid)
@@ -121,12 +121,121 @@ RSpec.describe "/grades", type: :request do
       end
     end
   end
+
+  #TAs Authorization
+  context "TA should be signed in" do
+    before do
+      @user = User.create(email: "ta@ta.com", password: "password123", account_id: 0)
+      sign_in @user
+    end
   
-  #Sad Paths
-  context "When not signed in" do
-    it "should not GET /index" do
-      get grades_url
-      expect(response).to redirect_to(new_user_session_path)
+    describe "GET /index" do
+      it "renders a successful response" do
+        create(:grade, :valid)
+        get grades_url
+        expect(response).to be_successful
+      end
+    end
+
+    describe "GET /show" do
+      it "renders a successful response" do
+        grade = create(:grade, :valid)
+        get grade_url(grade)
+        expect(response).to be_successful
+      end
+    end
+
+    describe "GET /new" do
+      it "renders a successful response" do
+        get new_grade_url
+        expect(response).to be_successful
+      end
+    end
+
+    describe "GET /edit" do
+      it "render a successful response" do
+        grade = create(:grade, :valid)
+        get edit_grade_url(grade)
+        expect(response).to be_successful
+      end
+    end
+
+    describe "POST /create" do
+      context "with valid parameters" do
+        it "creates a new Grade" do
+          expect {
+          post grades_url, params: { grade: attributes_for(:grade, :valid) }
+          }.to change(Grade, :count).by(1)
+        end
+
+        it "redirects to the created grade" do
+          post grades_url, params: { grade: attributes_for(:grade, :valid) }
+          expect(response).to redirect_to(grade_url(Grade.last))
+        end
+      end
+    end
+
+    context "with invalid parameters" do
+      it "does not create a new Grade" do
+        expect {
+          post grades_url, params: { grade: attributes_for(:grade, :invalid) }
+        }.to change(Grade, :count).by(0)
+      end
+
+      it "renders a successful response (i.e. to display the 'new' template)" do
+        post grades_url, params: { grade: attributes_for(:grade, :invalid) }
+        expect(response).to be_successful
+      end
+    end
+  
+
+    describe "PATCH /update" do
+      context "with valid parameters" do
+        it "updates the requested grade" do
+          grade = create(:grade, :valid)
+          patch grade_url(grade), params: { grade: attributes_for(:grade, :valid) }
+          grade.reload
+          expect(response).to redirect_to(grade_url(grade))
+        end
+
+        it "redirects to the grade" do
+          grade = create(:grade, :valid)
+          patch grade_url(grade), params: { grade: attributes_for(:grade, :valid) }
+          grade.reload
+          expect(response).to redirect_to(grade_url(grade))
+        end
+      end
+
+      context "with invalid parameters" do
+        it "renders a successful response (i.e. to display the 'edit' template)" do
+          grade = create(:grade, :valid)
+          patch grade_url(grade), params: { grade: attributes_for(:grade, :invalid) }
+          expect(response).to be_successful
+        end
+      end
+    end
+
+    describe "DELETE /destroy" do
+      it "destroys the requested grade" do
+        grade = create(:grade, :valid)
+        expect {
+        delete grade_url(grade)
+        }.to change(Grade, :count).by(0)
+      end
+
+      it "redirects to the grades list" do
+        grade = create(:grade, :valid)
+        delete grade_url(grade)
+        expect(response).to redirect_to(grades_url)
+      end
     end
   end
-end
+  
+    #Sad Paths
+    context "When not signed in" do
+      it "should not GET /index" do
+        get grades_url
+        expect(response).to redirect_to(new_user_session_path)
+      end
+    end
+  end
