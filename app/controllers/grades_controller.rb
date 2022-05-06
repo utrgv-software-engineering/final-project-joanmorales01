@@ -1,13 +1,23 @@
 class GradesController < ApplicationController
-  before_action :set_grade, only: [:show, :edit, :update, :destroy]
+  before_action :set_grade, only: [:show, :edit, :update, :destroy, :sort]
   before_action :authenticate_user!
 
   # GET /grades
   def index
-    if !user_signed_in? 
+    if user_signed_in?
+      if params[:asc]=='true'
+        @grades = Grade.order('student_grade')
+      elsif params[:asc]=='false'
+        @grades = Grade.order('student_grade DESC')
+      else 
+        @grades = Grade.all
+      end
+    else
       redirect_to new_user_session_path
     end
   end
+    
+    
 
   # GET /grades/1
   def show
@@ -55,6 +65,7 @@ class GradesController < ApplicationController
       redirect_to new_user_session_path
     end  
   end
+
 
   private
     # Use callbacks to share common setup or constraints between actions.
