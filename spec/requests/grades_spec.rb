@@ -14,7 +14,7 @@
 
 RSpec.describe "/grades", type: :request do
 
-  #Happy Paths
+  #Teachers Authorization & Happy Paths
   context "When signed in as teacher" do
     before do 
       @user = User.create(email: "teacher@teacher.com", password: "password123", account_id: 1)
@@ -122,7 +122,7 @@ RSpec.describe "/grades", type: :request do
     end
   end
 
-  #TAs Authorization
+  #TAs Authorization & Happy Paths
   context "TA should be signed in" do
     before do
       @user = User.create(email: "ta@ta.com", password: "password123", account_id: 0)
@@ -235,6 +235,37 @@ RSpec.describe "/grades", type: :request do
     context "When not signed in" do
       it "should not GET /index" do
         get grades_url
+        expect(response).to redirect_to(new_user_session_path)
+      end
+
+      it "should not get new" do
+        get new_grade_url(@user)
+        expect(response).to redirect_to(new_user_session_path)
+      end
+
+      describe "POST /create" do
+        context "with invalid parameters" do
+          it "does not create a new Grade" do
+            expect {
+              post grades_url, params: { grade: attributes_for(:grade, :invalid) }
+            }.to change(Grade, :count).by(0)
+          end
+
+          it "redirects to the sign in page" do
+            post grades_url, params: { grade: attributes_for(:grade, :invalid) }
+            expect(response).to redirect_to(new_user_session_path)
+          end
+        end
+      end
+
+      it "should not show grade" do
+        post grades_url(@user, @grade)
+        expect(response).to redirect_to(new_user_session_path)
+      end
+
+      it "should not edit" do
+        grade = create(:grade, :valid)
+        get edit_grade_url(grade)
         expect(response).to redirect_to(new_user_session_path)
       end
     end
