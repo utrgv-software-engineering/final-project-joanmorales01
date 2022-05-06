@@ -4,12 +4,19 @@ class GradesController < ApplicationController
 
   # GET /grades
   def index
-    if !user_signed_in? 
-      redirect_to new_user_session_path
+    if user_signed_in?
+      if params[:asc]=='true'
+        @grades = Grade.order('student_grade')
+      elsif params[:asc]=='false'
+        @grades = Grade.order('student_grade DESC')
+      else 
+        @grades = Grade.all
+      end
     else
-      @grades = Grade.all
+      redirect_to new_user_session_path
     end
   end
+
 
   # GET /grades/1
   def show
