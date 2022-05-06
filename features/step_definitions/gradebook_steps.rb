@@ -1,5 +1,5 @@
 Given("there are grades in the gradebook") do
-    @teacher = create(:user)
+    @teacher = User.create(email: "teacher@teacher.com", password: "default123", account_id: 1)
     @eric = create(:grade, :valid)
     @tomai = create(:grade, :valid)
     @schweller = create(:grade, :valid)
@@ -9,7 +9,7 @@ end
 Given("I sign in") do
     visit new_user_session_path
     fill_in "user_email", with: @teacher.email
-    fill_in "user_password", with: "123greetings"
+    fill_in "user_password", with: "default123"
     click_on "Log in"
 end
 
@@ -37,7 +37,7 @@ Then("I should have added a grade") do
 end
 
 Then("that post should be deleted") do
-    expect(page).to have_content("Grade was successfully destroyed.")
+    expect(page).to have_content("Grade was successfully destroyed")
 end
 
 Then("I should see everyone's grades") do
@@ -73,14 +73,11 @@ end
 
 Then("I should be able to see the {string} link") do |string|
     expect(page).to have_content(string)
-
-
     visit '/users/sign_in'
 end
 
 Then("I should not be able to see the {string}button") do |string|
     expect(page).not_to have_content(string)
-
     visit 'users/sign_in'
 end
 
