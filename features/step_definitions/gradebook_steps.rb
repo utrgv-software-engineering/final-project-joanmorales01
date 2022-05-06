@@ -88,3 +88,15 @@ end
 Then("I should have not added a grade") do
     expect(page).to have_content("Student grade can't be greater than 100")
 end
+
+Then("I should see a column labeled Student ID") do
+    expect(page).to have_content("Student ID")
+end
+
+Then("I should see a label called Student ID") do
+    expect(page).to have_content("Student ID")
+end
+
+Then("I should see a box labeled Student id") do
+    expect(page).to have_content("Student id")
+end
