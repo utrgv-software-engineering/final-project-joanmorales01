@@ -1,10 +1,11 @@
 class GradesController < ApplicationController
   before_action :set_grade, only: [:show, :edit, :update, :destroy]
+  before_action :authenticate_user!
 
   # GET /grades
   def index
-    if !user_signed_in?
-      redirect_to user_session_path
+    if !user_signed_in? 
+      redirect_to new_user_session_path
     end
   end
 
@@ -43,8 +44,16 @@ class GradesController < ApplicationController
 
   # DELETE /grades/1
   def destroy
-    @grade.destroy
-    redirect_to grades_url, notice: 'Grade was successfully destroyed.'
+    if user_signed_in?
+      if current_user.account_id == 1
+        @grade.destroy
+        redirect_to grades_url, notice: 'Grade was successfully destroyed'
+      else
+        redirect_to grades_url, notice: 'You do not have Authorization for this action'
+      end
+    else 
+      redirect_to new_user_session_path
+    end  
   end
 
   private
