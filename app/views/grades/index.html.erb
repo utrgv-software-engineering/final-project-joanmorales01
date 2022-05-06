@@ -1,5 +1,9 @@
 <p id="notice"><%= notice %></p>
 
+<strong>Sort By:</strong>
+<%= link_to 'ASC', grades_path(asc:true) %>
+<%= link_to 'DESC', grades_path(asc:false) %>
+
 <h1>Grades</h1>
 
 <table>
